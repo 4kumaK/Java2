@@ -1,0 +1,88 @@
+src/main/java/com/barbearia/
+│
+├── controller/
+│   ├── ClienteController.java
+│   ├── ServicoController.java
+│   └── AgendamentoController.java
+│
+├── model/
+│   ├── Cliente.java
+│   ├── Servico.java
+│   └── Agendamento.java
+│
+├── repository/
+│   ├── ClienteRepository.java
+│   ├── ServicoRepository.java
+│   └── AgendamentoRepository.java
+│
+├── service/
+│   ├── ClienteService.java
+│   ├── ServicoService.java
+│   └── AgendamentoService.java
+│
+└── BarbeariaApplication.java
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Cliente {
+    @Id @GeneratedValue
+    private Long id;
+    private String nome;
+    private String telefone;
+    private String email;
+}
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Servico {
+    @Id @GeneratedValue
+    private Long id;
+    private String nome;
+    private Double preco;
+    private Integer duracaoMinutos;
+}
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class Agendamento {
+    @Id @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    private Cliente cliente;
+
+    @ManyToOne
+    private Servico servico;
+
+    private LocalDateTime dataHora;
+    private String status; // PENDENTE, CONCLUIDO, CANCELADO
+}
+
+public interface ClienteRepository extends JpaRepository<Cliente, Long> {}
+public interface ServicoRepository extends JpaRepository<Servico, Long> {}
+public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> {}
+
+
+@RestController
+@RequestMapping("/api/clientes")
+public class ClienteController {
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @GetMapping
+    public List<Cliente> listar() {
+        return clienteRepository.findAll();
+    }
+
+    @PostMapping
+    public Cliente salvar(@RequestBody Cliente cliente) {
+        return clienteRepository.save(cliente);
+    }
+}
